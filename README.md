@@ -54,7 +54,9 @@ pip install -e .
 Run the complete pipeline for the 2025 season with default parameters:
 
 ```bash
-python scripts/run_2025.py
+python3 scripts/run_2025.py
+# Or make it executable and run directly:
+# ./scripts/run_2025.py
 ```
 
 This will:
@@ -67,7 +69,7 @@ This will:
 ### Custom Configuration
 
 ```bash
-python scripts/run_2025.py \
+python3 scripts/run_2025.py \
   --draws 2000 \
   --tune 1500 \
   --sims 20000 \
@@ -79,7 +81,7 @@ python scripts/run_2025.py \
 ### All Options
 
 ```bash
-python scripts/run_2025.py --help
+python3 scripts/run_2025.py --help
 ```
 
 Key parameters:
@@ -258,8 +260,8 @@ The pipeline includes validation by comparing teammate performance:
 
 Vary `--rep_quantile` (0.20–0.30) to check rank stability:
 ```bash
-python scripts/run_2025.py --rep_quantile 0.20 --out out/rep20/
-python scripts/run_2025.py --rep_quantile 0.30 --out out/rep30/
+python3 scripts/run_2025.py --rep_quantile 0.20 --out out/rep20/
+python3 scripts/run_2025.py --rep_quantile 0.30 --out out/rep30/
 ```
 
 Top drivers should show minimal rank changes.

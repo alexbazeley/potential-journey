@@ -4,10 +4,10 @@
 
 ```bash
 # 1. Install dependencies
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # 2. Verify installation
-python -c "import fastf1, pymc, arviz; print('All dependencies installed!')"
+python3 -c "import fastf1, pymc, arviz; print('All dependencies installed!')"
 ```
 
 ## Fast Test Run (2024 data, reduced parameters)
@@ -16,7 +16,7 @@ Since 2025 data may not be fully available yet, test with 2024:
 
 ```bash
 # Quick test with reduced parameters (~5-10 minutes total)
-python scripts/run_2025.py \
+python3 scripts/run_2025.py \
   --year 2024 \
   --draws 500 \
   --tune 500 \
@@ -53,7 +53,7 @@ Once you've verified the pipeline works:
 
 ```bash
 # Production run with full parameters (~20-30 minutes)
-python scripts/run_2025.py \
+python3 scripts/run_2025.py \
   --year 2025 \
   --draws 2000 \
   --tune 1500 \
@@ -69,21 +69,21 @@ python scripts/run_2025.py \
 
 **Solution**: The 2025 season may not have started or have limited data. Use 2024 for testing:
 ```bash
-python scripts/run_2025.py --year 2024
+python3 scripts/run_2025.py --year 2024
 ```
 
 ### Issue: "ImportError: No module named 'pymc'"
 
 **Solution**: Install dependencies:
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### Issue: Model fitting is very slow
 
 **Solution**: Reduce draws and tune:
 ```bash
-python scripts/run_2025.py --draws 500 --tune 500
+python3 scripts/run_2025.py --draws 500 --tune 500
 ```
 
 ### Issue: Memory error during model fitting
@@ -98,7 +98,7 @@ python scripts/run_2025.py --draws 500 --tune 500
 **Solution**: Clear cache and retry:
 ```bash
 rm -rf cache/
-python scripts/run_2025.py
+python3 scripts/run_2025.py
 ```
 
 ## Understanding the Results
@@ -125,7 +125,7 @@ After the pipeline completes, check these files:
 
 ```bash
 # Vary replacement level
-python scripts/run_2025.py --rep_quantile 0.30 --out out/rep30/
+python3 scripts/run_2025.py --rep_quantile 0.30 --out out/rep30/
 
 # Compare results
 diff <(tail -n+2 out/pwar_by_season_2025.csv | sort) \
@@ -137,7 +137,7 @@ diff <(tail -n+2 out/pwar_by_season_2025.csv | sort) \
 ```bash
 # Run for 2023, 2024, 2025
 for year in 2023 2024 2025; do
-  python scripts/run_2025.py --year $year --out out/$year/
+  python3 scripts/run_2025.py --year $year --out out/$year/
 done
 
 # Compare top drivers across years
@@ -188,7 +188,7 @@ FastF1 caches downloaded data. After the first run, subsequent runs for the same
 
 ```bash
 # Ultra-fast test run
-python scripts/run_2025.py \
+python3 scripts/run_2025.py \
   --year 2024 \
   --draws 100 \
   --tune 100 \
