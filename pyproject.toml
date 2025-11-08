@@ -2,7 +2,7 @@
 name = "war-f1"
 version = "0.1.0"
 description = "Formula 1 Wins Above Replacement metric pipeline"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = [
     "fastf1>=3.3.0",
     "pandas>=2.0.0",

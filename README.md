@@ -27,7 +27,7 @@ The metric has two components:
 
 ### Requirements
 
-- Python 3.10 or higher
+- Python 3.9 or higher
 - ~2GB disk space for FastF1 cache
 - 8GB+ RAM recommended for Bayesian modeling
 
