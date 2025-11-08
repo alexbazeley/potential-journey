@@ -7,7 +7,7 @@ returning structured dataframes for further processing.
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 import warnings
 
 import fastf1
@@ -37,7 +37,7 @@ def setup_fastf1_cache(cache_dir: Path = Path("./cache")) -> None:
 
 def fetch_race_session(
     year: int,
-    event: int | str,
+    event: Union[int, str],
     session: str = "R"
 ) -> Optional[fastf1.core.Session]:
     """
