@@ -42,6 +42,7 @@ def filter_race_laps(
         Filtered lap data
     """
     logger.info(f"Starting with {len(laps)} total laps")
+    logger.info(f"Available columns: {list(laps.columns)}")
 
     # Create a copy to avoid modifying original
     df = laps.copy()
@@ -50,10 +51,16 @@ def filter_race_laps(
     # This should already be done in data_fetch, but double-check
     initial_count = len(df)
 
-    # Remove pit laps
-    df = df[~df['PitInLap'].fillna(False)]
-    df = df[~df['PitOutLap'].fillna(False)]
-    logger.info(f"After pit lap removal: {len(df)} laps ({initial_count - len(df)} removed)")
+    # Remove pit laps (if columns exist)
+    if 'PitInLap' in df.columns:
+        df = df[~df['PitInLap'].fillna(False)]
+        logger.info(f"Removed PitInLap: {initial_count - len(df)} laps")
+        initial_count = len(df)
+
+    if 'PitOutLap' in df.columns:
+        df = df[~df['PitOutLap'].fillna(False)]
+        logger.info(f"Removed PitOutLap: {initial_count - len(df)} laps")
+        initial_count = len(df)
 
     # Keep only green flag laps (TrackStatus == '1')
     if 'TrackStatus' in df.columns:
