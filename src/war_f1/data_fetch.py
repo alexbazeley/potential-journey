@@ -157,6 +157,20 @@ def extract_laps_data(sessions: List[fastf1.core.Session]) -> pd.DataFrame:
                 laps['TrackTemp'] = None
                 laps['Humidity'] = None
 
+            # Try to add grid positions from results
+            try:
+                results = session.results
+                if results is not None and len(results) > 0:
+                    # Extract grid positions and driver identifiers
+                    grid_info = results[['Abbreviation', 'GridPosition']].copy() if 'GridPosition' in results.columns else None
+                    if grid_info is not None and 'Abbreviation' in results.columns:
+                        # Match on Driver abbreviation
+                        grid_dict = dict(zip(grid_info['Abbreviation'], grid_info['GridPosition']))
+                        laps['GridPosition'] = laps['Driver'].map(grid_dict)
+                        logger.info(f"  Added grid positions for {session.event.get('EventName', 'race')}")
+            except Exception as e:
+                logger.debug(f"  Could not add grid positions: {e}")
+
             all_laps.append(laps)
 
         except Exception as e:

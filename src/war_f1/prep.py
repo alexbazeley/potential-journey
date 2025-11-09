@@ -64,12 +64,12 @@ def filter_race_laps(
 
     # Keep only green flag laps (TrackStatus == '1')
     if 'TrackStatus' in df.columns:
-        df = df[df['TrackStatus'] == '1']
+        df = df[df['TrackStatus'] == '1'].copy()
         logger.info(f"After track status filter: {len(df)} laps")
 
     # Keep only accurate laps
     if 'IsAccurate' in df.columns:
-        df = df[df['IsAccurate'] == True]
+        df = df[df['IsAccurate'] == True].copy()
         logger.info(f"After accuracy filter: {len(df)} laps")
 
     # Convert LapTime to seconds
@@ -282,30 +282,58 @@ def create_race_summary(df: pd.DataFrame) -> pd.DataFrame:
         Summary with columns: RoundNumber, EventName, Driver, Team, GridPosition,
         MeanLapTime, MedianLapTime, LapCount, etc.
     """
-    summary = df.groupby(['RoundNumber', 'EventName', 'Driver', 'Team']).agg({
+    # Build aggregation dict based on available columns
+    agg_dict = {
         'LapTime_s': ['mean', 'median', 'std', 'count'],
         'LapTime_demean': ['mean', 'median'],
-        'GridPosition': 'first',
-        'DriverID': 'first',
-        'TeamID': 'first',
-        'TeamRaceID': 'first'
-    }).reset_index()
+    }
+
+    # Add optional columns if they exist
+    if 'GridPosition' in df.columns:
+        agg_dict['GridPosition'] = 'first'
+
+    if 'DriverID' in df.columns:
+        agg_dict['DriverID'] = 'first'
+
+    if 'TeamID' in df.columns:
+        agg_dict['TeamID'] = 'first'
+
+    if 'TeamRaceID' in df.columns:
+        agg_dict['TeamRaceID'] = 'first'
+
+    summary = df.groupby(['RoundNumber', 'EventName', 'Driver', 'Team']).agg(agg_dict).reset_index()
 
     # Flatten column names
     summary.columns = ['_'.join(col).strip('_') if col[1] else col[0] for col in summary.columns]
 
     # Rename for clarity
-    summary = summary.rename(columns={
+    rename_map = {
         'LapTime_s_mean': 'MeanLapTime',
         'LapTime_s_median': 'MedianLapTime',
         'LapTime_s_std': 'StdLapTime',
         'LapTime_s_count': 'LapCount',
         'LapTime_demean_mean': 'MeanLapTime_demean',
         'LapTime_demean_median': 'MedianLapTime_demean',
-        'GridPosition_first': 'GridPosition',
-        'DriverID_first': 'DriverID',
-        'TeamID_first': 'TeamID',
-        'TeamRaceID_first': 'TeamRaceID'
-    })
+    }
+
+    # Add optional renames
+    if 'GridPosition_first' in summary.columns:
+        rename_map['GridPosition_first'] = 'GridPosition'
+
+    if 'DriverID_first' in summary.columns:
+        rename_map['DriverID_first'] = 'DriverID'
+
+    if 'TeamID_first' in summary.columns:
+        rename_map['TeamID_first'] = 'TeamID'
+
+    if 'TeamRaceID_first' in summary.columns:
+        rename_map['TeamRaceID_first'] = 'TeamRaceID'
+
+    summary = summary.rename(columns=rename_map)
+
+    # If GridPosition is missing, use a default based on position or set to middle of grid
+    if 'GridPosition' not in summary.columns:
+        logger.warning("GridPosition not available in lap data, using default value of 10")
+        summary['GridPosition'] = 10  # Mid-grid default
 
     return summary
