@@ -237,12 +237,17 @@ def generate_html_report(
     top10_html = top10.to_html(index=False, classes='table')
 
     # Diagnostics summary
+    # Compute values first to avoid f-string formatting issues
+    n_params = len(diagnostics)
+    high_rhat_count = (diagnostics['r_hat'] > 1.05).sum() if 'r_hat' in diagnostics.columns else 'N/A'
+    mean_ess = f"{diagnostics['ess_bulk'].mean():.0f}" if 'ess_bulk' in diagnostics.columns else 'N/A'
+
     diag_summary = f"""
     <p><strong>Convergence diagnostics:</strong></p>
     <ul>
-        <li>Parameters checked: {len(diagnostics)}</li>
-        <li>R-hat > 1.05: {(diagnostics.get('r_hat', pd.Series([1.0])) > 1.05).sum() if 'r_hat' in diagnostics.columns else 'N/A'}</li>
-        <li>Mean ESS: {diagnostics['ess_bulk'].mean():.0f if 'ess_bulk' in diagnostics.columns else 'N/A'}</li>
+        <li>Parameters checked: {n_params}</li>
+        <li>R-hat > 1.05: {high_rhat_count}</li>
+        <li>Mean ESS: {mean_ess}</li>
     </ul>
     """
 
